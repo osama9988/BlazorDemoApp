@@ -12,7 +12,6 @@ namespace BlazorDemoApp.Shared.Classes.TableClass
     public class MyAppUser : AuditEntity_EmpID_INT, IdInt,IIsActive, ITable
     {
         public int Id { get  ; set; }
-        public bool IsActive { get ; set ; }
 
         [Display(Name = "اسم المستخدم")]
         public string? UserName { get; set; }
@@ -30,8 +29,7 @@ namespace BlazorDemoApp.Shared.Classes.TableClass
         public bool? isPasswordReset { get; set; }
 
         [Display(Name = "الحالة")]
-        public bool? isActive { get; set; } = true;
-
+        public bool IsActive { get; set; } = true;
         public int? IDFK_MyAppUser { get; set; }
         public virtual MyAppUser? Reg_by { get; set; }
 

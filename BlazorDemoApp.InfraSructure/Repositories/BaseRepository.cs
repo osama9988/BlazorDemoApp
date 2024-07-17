@@ -1,4 +1,6 @@
 ﻿using BlazorDemoApp.Core.Interfaces;
+using BlazorDemoApp.Shared.Classes.BaseClass;
+using BlazorDemoApp.Shared.Consts;
 using BlazorDemoApp.Shared.Interface;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -8,7 +10,7 @@ using System.Xml.Linq;
 namespace BlazorDemoApp.InfraSructure.Repositories
 {
 
-    public class BaseRepository<T> : IBaseRepository<T> where T : ITable
+    public class BaseRepository<T> : IBaseRepository<T> where T : class ,ITable
     {
 		protected ApplicationDbContext _context;
 
@@ -394,7 +396,7 @@ namespace BlazorDemoApp.InfraSructure.Repositories
 				var rslt = new List<Select2Model>();
 				if (top_element.Value)
 				{
-					rslt.Add(new Select2Model { id = string.IsNullOrWhiteSpace(top_id) ? "" : top_id, text = string.IsNullOrWhiteSpace(top_name) ? " " : top_name });
+					rslt.Add(new Select2Model { Id = string.IsNullOrWhiteSpace(top_id) ? "" : top_id, Text = string.IsNullOrWhiteSpace(top_name) ? " " : top_name });
 				}
 
 				var l = FindAll(criteria).ToList();
@@ -408,8 +410,8 @@ namespace BlazorDemoApp.InfraSructure.Repositories
 
 						rslt.Add(new Select2Model()
 						{
-							id = item.GetType().GetProperty(id).GetValue(item, null).ToString(),
-							text = item.GetType().GetProperty(txt).GetValue(item, null).ToString()
+							Id = item.GetType().GetProperty(id).GetValue(item, null).ToString(),
+							Text = item.GetType().GetProperty(txt).GetValue(item, null).ToString()
 						});
 					}
 

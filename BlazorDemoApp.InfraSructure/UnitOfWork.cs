@@ -1,11 +1,14 @@
 ﻿using BlazorDemoApp.Core;
 using BlazorDemoApp.Core.Interfaces;
 using BlazorDemoApp.InfraSructure.Repositories;
+using BlazorDemoApp.Shared.Classes.BaseClass;
 using BlazorDemoApp.Shared.Classes.TableClass;
 using BlazorDemoApp.Shared.Interface;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace BlazorDemoApp.InfraSructure
@@ -16,36 +19,26 @@ namespace BlazorDemoApp.InfraSructure
         private readonly Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
         private IDbContextTransaction _transaction;
 
-        public IBaseRepository<MyAppUser> MyAppUser=  new BaseRepository<MyAppUser>(_context);
 
-        public IBaseRepository<Add1_Markaz> Add0_Gov = new BaseRepository<Add1_Markaz>(_context);
 
-        public IBaseRepository<Add1_Markaz> Add1_Markaz = new BaseRepository<Add1_Markaz>(_context);
-        public IBaseRepository<Add2_City> Add2_City = new BaseRepository<Add2_City>(_context);
 
-      
         //
 
 
         public UnitOfWork(ApplicationDbContext context, IDbContextTransaction transaction = null)
 
         {
-
             _context = context ?? throw new ArgumentNullException(nameof(context));
-
             _transaction = transaction;
 
-            // Marking the parameter as unused to suppress the warning
-#pragma warning disable CS1711 // Unused parameter
-            _ = transaction;
-#pragma warning restore CS1711 // Unused parameter
-            //
-
-
-
         }
+      
 
-        public IBaseRepository<T>? GetRepository<T>() where T : ITable
+
+
+
+
+        public IBaseRepository<T>? GetRepository<T>() where T : class, ITable
         {
             try
             {
@@ -93,7 +86,7 @@ namespace BlazorDemoApp.InfraSructure
         {
             try
             {
-                //var db_Ver = _context.DBSettings.OrderByDescending(e => e.Id).ToList().FirstOrDefault().ver;
+                var db_Ver = 0; //_context.DBSettings.OrderByDescending(e => e.Id).ToList().FirstOrDefault().ver;
 
                 //// return (db_Ver.Equals("1"))? true:false ; 
                 ////return (db_Ver.Equals("1.1.1"))? true:false ; 
