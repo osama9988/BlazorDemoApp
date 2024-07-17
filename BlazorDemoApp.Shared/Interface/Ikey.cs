@@ -10,4 +10,12 @@ namespace BlazorDemoApp.Shared.Interface
     {
         string Key { get; set; }
     }
+
+    public interface IkeyIdentity
+    {
+        string Key { get; set; }
+        string? AddedBy { get; set; }
+
+        string? ModifiedBy { get; set; }
+    }
 }
