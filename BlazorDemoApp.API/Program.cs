@@ -6,6 +6,7 @@ using BlazorDemoApp.API.Services.Mappings;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using System.Globalization;
 
 namespace BlazorDemoApp.API
@@ -28,8 +29,11 @@ namespace BlazorDemoApp.API
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
+            //builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                 c.OperationFilter<AddAcceptLanguageHeaderParameter>();
+            });
 
             //
             var assembly = Assembly.GetExecutingAssembly();
@@ -51,21 +55,20 @@ namespace BlazorDemoApp.API
             ServiceRegistration.Register_BaseOfServiceV2(builder.Services, assembly);
 
 
+            const string defaultCulture = "ar";
+
+            var supportedCultures = new[] {new CultureInfo(defaultCulture), new CultureInfo("en")};
+
             builder.Services.Configure<RequestLocalizationOptions>(options =>
             {
-                var supportedCultures = new List<CultureInfo> { new CultureInfo("ar-EG"),new CultureInfo("en-US"), new CultureInfo("fr-FR"), };
-
-                options.DefaultRequestCulture = new RequestCulture("ar-EG");
+                options.DefaultRequestCulture = new RequestCulture(defaultCulture);
                 options.SupportedCultures = supportedCultures;
                 options.SupportedUICultures = supportedCultures;
-
-                // Optionally, set fallback to default culture if no match found
-                options.FallBackToParentCultures = true;
-                options.FallBackToParentUICultures = true;
             });
-            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("ar-EG");
 
             var app = builder.Build();
+
+            app.UseRequestCulture(); // Add the middleware here
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -78,8 +81,10 @@ namespace BlazorDemoApp.API
 
             app.UseAuthorization();
 
-            app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
-            app.UseRequestCulture(); // Add the middleware here
+            
+            //app.UseRequestLocalization(options => options.AddSupportedCultures("en", "ar").AddSupportedUICultures("en", "ar").SetDefaultCulture("ar"));
+            app.UseRequestLocalization();
+            
 
             app.MapControllers();
 

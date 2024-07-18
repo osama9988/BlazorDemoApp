@@ -3,6 +3,8 @@ using System.Runtime.InteropServices;
 using System;
 using BlazorDemoApp.Shared;
 using static BlazorDemoApp.Shared.App_Strings;
+using System.Globalization;
+using System.Threading;
 
 namespace BlazorDemoApp.API.Helpers
 {
@@ -109,7 +111,7 @@ namespace BlazorDemoApp.API.Helpers
         }
     }
 
-  
+
     [ApiController]
     [Route("Basecontroller1")]
     public class MyAppServicesController3 : MyLoggerbaseController, IAppServicesProvider
@@ -123,5 +125,29 @@ namespace BlazorDemoApp.API.Helpers
             _AppServices_id = appServices;
         }
         public AppServices cur_AppService => _AppServices_id;
+
+        protected cur_lang GetRequestLang()
+        {
+            cur_lang lang = cur_lang.ar;
+            if (HttpContext.Request.Headers.ContainsKey("Accept-Language"))
+            {
+                var acceptLanguage = HttpContext.Request.Headers["Accept-Language"].ToString();
+                var cultureName = acceptLanguage.Split(',')[0]; // Take the first language tag
+                var culture = new CultureInfo(cultureName);
+
+                CultureInfo.CurrentCulture = culture;
+                CultureInfo.CurrentUICulture = culture;
+
+                // Setting culture for the thread
+                Thread.CurrentThread.CurrentCulture = culture;
+                Thread.CurrentThread.CurrentUICulture = culture;
+
+
+                var thread = Thread.CurrentThread.CurrentCulture;
+                 lang = (thread.Name == null) ? cur_lang.ar : (thread.Name.ToLower().Contains("en")) ?  cur_lang.en : cur_lang.ar;
+
+            }
+            return lang;
+        }
     }
 }

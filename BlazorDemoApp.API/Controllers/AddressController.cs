@@ -33,17 +33,21 @@ namespace BlazorDemoApp.API.Controllers
             }
         }
 
+        //if (HttpContext.Request.Headers.TryGetValue("Accept-Language", out var acceptLanguage))
+        //{
+        //    var culture = new CultureInfo(acceptLanguage.ToString());
+
+        //}
         [HttpGet("GetAllGovsSelect2")]
-        public IActionResult GetAllGovs_Select2()
+        public IEnumerable<Select2Model> GetAllGovs_Select2()
         {
             try
             {
-                var currentCulture = CultureInfo.CurrentCulture;
 
                 var thread = Thread.CurrentThread.CurrentCulture;
-              
-
-                return null;
+                var lang = GetRequestLang();
+                var l = _cusSer.GetSelectList(lang, a => a.Id > 0);
+                return l;
             }
             catch (Exception ex)
             {

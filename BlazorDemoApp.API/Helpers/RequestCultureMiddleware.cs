@@ -13,8 +13,9 @@ namespace BlazorDemoApp.API.Helpers
 
         public async Task Invoke(HttpContext context)
         {
-           
-            
+
+            var thread = Thread.CurrentThread.CurrentCulture;
+
             if (context.Request.Headers.ContainsKey("Accept-Language"))
             {
                 var acceptLanguage = context.Request.Headers["Accept-Language"].ToString();
@@ -23,8 +24,17 @@ namespace BlazorDemoApp.API.Helpers
 
                 CultureInfo.CurrentCulture = culture;
                 CultureInfo.CurrentUICulture = culture;
+
+                // Setting culture for the thread
+                System.Threading.Thread.CurrentThread.CurrentCulture = culture;
+                System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
+
+                
             }
-           
+            //
+            var t0 = Thread.CurrentThread.CurrentCulture;
+            //
+
 
             await _next(context);
         }
