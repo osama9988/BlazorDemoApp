@@ -27,11 +27,11 @@ namespace BlazorDemoApp.API.Helpers
 
         protected MyJsonRsult Get_JsonResultOfDelete(DeleteResult value)
         {
-            if (value == DeleteResult.deleted) return  new MyJsonRsult() { Success = true, Message = str_delete_yes, Message2 = "", Url = "", Deleted = true };
+            if (value == DeleteResult.deleted) return  new MyJsonRsult() { Success = true, Message = str_delete_yes, Message2 = "", Url = "" };
             //
 
             if (value == DeleteResult.failed) return new MyJsonRsult() { Success = false, Message = load_data_error, Message2 = "", Url = "" };
-            if (value == DeleteResult.cannot_delete) return new MyJsonRsult() { Success = false, Message = str_delete_edit_cannot, Message2 = "", Url = "", Deleted = false };
+            if (value == DeleteResult.cannot_delete) return new MyJsonRsult() { Success = false, Message = str_delete_edit_cannot, Message2 = "", Url = "" };
              return new MyJsonRsult() { Success = false, Message = str_delete_no, Message2 = "", Url = "" };
         }
 
