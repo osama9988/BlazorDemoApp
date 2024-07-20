@@ -6,7 +6,8 @@ using System.Globalization;
 
 namespace BlazorDemoApp.API.Controllers
 {
-    [Route("[controller]")]
+    [Authorize]
+    [Route("api/[controller]")]
     [ApiController]
     public class AddressController : MyAppServicesController3
     {
@@ -17,6 +18,8 @@ namespace BlazorDemoApp.API.Controllers
             _cusSer= serviceOf_Add0_Gov;    
         }
 
+
+        [MyPermission1(action: UserActions.Delete)]
         [HttpGet("GovGetAll")]
         public IActionResult GetAllGovs()
         {

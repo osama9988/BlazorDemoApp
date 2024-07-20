@@ -178,7 +178,12 @@ namespace BlazorDemoApp.Shared
         public static string NoPermissions = "عفوا .. لا تمتلك الصلاحيات الكافية لاتمام هذا الإجراء";
         public static string Edit_MyAppUserPassQs = "تم مسح كلمة السر الحالية و إعادتها للكلمة الافتراضية و كذلك اسئلة استرجاع البيانات";
         public static string Edit_MyAppUserPass = "تم مسح كلمة السر الحالية و إعادتها للكلمة الافتراضية";
+        //
 
+        public static string user_InActive = "تم ايقاف هذا المستخدم";
+        public static string user_NotFound = "لا يوجد مستخدم مطابق للبيانات المدخلة";
+        public static string user_MustChangePass = "يجب تغيير كلمة السر";
+        //
     }
     public enum UserActions
     {

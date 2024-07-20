@@ -4,7 +4,7 @@ global using Microsoft.AspNetCore.Http.HttpResults;
 global using Microsoft.AspNetCore.Mvc;
 global using System.Reflection;
 global using Microsoft.AspNetCore.DataProtection;
-
+global using Microsoft.AspNetCore.Authorization;
 
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Configuration;

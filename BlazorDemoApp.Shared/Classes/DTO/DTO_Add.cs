@@ -10,7 +10,7 @@ namespace BlazorDemoApp.Shared.Classes.DTO
 {
     public class DTO_Add
     {
-        public class DTO_Gov : Base_Add0_Gov, IkeyIdentity
+        public class DTO_Gov : Base1_Add0_Gov, IkeyIdentity
         {
             public string Key { get; set; }
 
@@ -18,7 +18,7 @@ namespace BlazorDemoApp.Shared.Classes.DTO
             public string? ModifiedBy { get; set; }
         }
 
-        public class DTO_GovFrm : Base_Add0_Gov, Ikey
+        public class DTO_GovFrm : Base0_Add0_Gov, Ikey
         {
             public string Key { get; set; }
 

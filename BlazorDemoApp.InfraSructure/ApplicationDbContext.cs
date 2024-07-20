@@ -11,6 +11,7 @@ namespace BlazorDemoApp.InfraSructure
         }
 
         public virtual DbSet<MyAppUser> MyAppUsers { get; set; }
+        public virtual DbSet<MyAppUserPermission> MyAppUserPermission { get; set; }
         public virtual DbSet<Add2_City> Add2Cities { get; set; }
         public virtual DbSet<Add0_Gov> Add0Govs { get; set; }
         public virtual DbSet<Add1_Markaz> Add1Markazs { get; set; }
@@ -39,17 +40,17 @@ namespace BlazorDemoApp.InfraSructure
         {
             modelBuilder.Entity<Add0_Gov>() //Detail
             .HasOne(d => d.MyAppUser)// child_navigation_list
-            .WithMany(m => m.Add0_Gov)//parent_navigation_list
+            .WithMany(m => m.LAdd0_Gov)//parent_navigation_list
             .HasForeignKey(d => d.added_by);//keys
 
             modelBuilder.Entity<Add1_Markaz>() //Detail
                     .HasOne(d => d.MyAppUser)// child_navigation_list
-                    .WithMany(m => m.Add1_Markaz)//parent_navigation_list
+                    .WithMany(m => m.LAdd1_Markaz)//parent_navigation_list
                     .HasForeignKey(d => d.added_by);//keys
 
             modelBuilder.Entity<Add2_City>() //Detail
                    .HasOne(d => d.MyAppUser)// child_navigation_list
-                   .WithMany(m => m.Add2_City)//parent_navigation_list
+                   .WithMany(m => m.LAdd2_City)//parent_navigation_list
                    .HasForeignKey(d => d.added_by);//keys
 
 
@@ -72,6 +73,11 @@ namespace BlazorDemoApp.InfraSructure
                       .HasOne(c => c.Reg_by) // child_navigation_list
                       .WithMany(p => p.LMyAppUser)//parent_navigation_list
                       .HasForeignKey(c => c.IDFK_MyAppUser); //keys
+
+            modelBuilder.Entity<MyAppUserPermission>()
+                     .HasOne(c => c.MyAppUser) // child_navigation_list
+                     .WithMany(p => p.LMyAppUserPermission)//parent_navigation_list
+                     .HasForeignKey(c => c.added_by); //keys
 
 
             modelBuilder.Entity<MyAppUser>().HasData(

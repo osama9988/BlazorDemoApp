@@ -10,15 +10,18 @@ using System.Threading.Tasks;
 
 namespace BlazorDemoApp.Shared.Classes.TableClass
 {
-    public class Add0_Gov : Base1_Add0_Gov, IdInt, ITable
+    public class MyAppUserPermission : Base_UserPermission, ITable, IdInt, IAuditEntity_EmpID_INT
     {
         [Key]
         [Column(Order = 1, TypeName = "int")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get ; set; }
+        public int Id { get ; set ; }
 
-        public List<Add1_Markaz> Markazs { get; set; }
-       
-        public MyAppUser MyAppUser { get; set; }    
+        public DateTime? added_date { get ; set ; }
+        public int? added_by { get ; set ; }
+        public DateTime? Modify_date { get ; set ; }
+        public int? Modify_by { get ; set ; }
+
+        public MyAppUser MyAppUser { get; set; }
     }
 }
