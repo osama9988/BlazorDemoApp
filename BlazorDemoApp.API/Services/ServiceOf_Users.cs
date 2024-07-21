@@ -30,13 +30,7 @@ namespace BlazorDemoApp.API.Services
             _jwt = jwt.Value;
         }
 
-        public class AuthModel
-        {
-            public string Username { get; set; }
-            public int UserID { get; set; }
-            public string Token { get; set; }
-            public DateTime ExpiresOn { get; set; }
-        }
+       
 
         private JwtSecurityToken CreateJwtToken(MyAppUser user)
         {
