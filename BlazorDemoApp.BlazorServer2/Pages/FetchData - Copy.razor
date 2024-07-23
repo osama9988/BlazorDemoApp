@@ -1,8 +1,11 @@
-﻿@page "/fetchdata0"
+﻿@page "/admin/fetchdata0"
 @using BlazorDemoApp.BlazorServer2.Data
+@layout BlazorDemoApp.BlazorServer2.Shared.AdminLayout.AdminLayout
+[authorize]
+
 @inject WeatherForecastService ForecastService
 
-<PageTitle>Weather forecast</PageTitle>
+<PageTitle>Admin Weather forecast</PageTitle>
 
 <h1>Weather forecast</h1>
 

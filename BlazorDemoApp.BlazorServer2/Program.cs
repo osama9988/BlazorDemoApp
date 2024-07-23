@@ -1,6 +1,7 @@
 using BlazorDemoApp.BlazorServer2.Data;
 using BlazorDemoApp.BlazorServer2.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorDemoApp.BlazorServer2
@@ -24,7 +25,10 @@ namespace BlazorDemoApp.BlazorServer2
             {
                 client.BaseAddress = new Uri("https://localhost:7249/"); // Your API base address
             });
+            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
+
+            builder.Services.AddAuthorization();
 
 
             var app = builder.Build();

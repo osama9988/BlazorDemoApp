@@ -1,4 +1,7 @@
-﻿@page "/allgov"
+﻿@page "/admin/allgov"
+@layout BlazorDemoApp.BlazorServer2.Shared.AdminLayout.AdminLayout
+[authorize]
+
 @using BlazorDemoApp.Shared.Classes.DTO
 @using  BlazorDemoApp.Shared
 @using System.Text.Json
