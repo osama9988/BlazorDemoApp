@@ -1,5 +1,6 @@
 using BlazorDemoApp.BlazorServer2.Data;
 using BlazorDemoApp.BlazorServer2.Services;
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -12,7 +13,17 @@ namespace BlazorDemoApp.BlazorServer2
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Load configuration from appsettings.json
+            var configuration = builder.Configuration;
+            builder.Services.AddSingleton(configuration);
+            var apiBaseAddress = configuration["ApiBaseAddress"];
+
+            builder.Services.AddBlazoredSessionStorage(); // Add this line
+
+            builder.Services.AddAuthenticationCore();
+            builder.Services.AddAuthorization();
+
+            builder.Services.AddLogging();
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
             builder.Services.AddSingleton<WeatherForecastService>();
@@ -21,14 +32,11 @@ namespace BlazorDemoApp.BlazorServer2
             {
                 client.BaseAddress = new Uri("https://localhost:7249/");
             });
-            builder.Services.AddHttpClient<ApiService>(client =>
-            {
-                client.BaseAddress = new Uri("https://localhost:7249/"); // Your API base address
-            });
+            builder.Services.AddHttpClient<ApiService>(client =>{client.BaseAddress = new Uri(apiBaseAddress); }); // Your API base address
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-
-
-            builder.Services.AddAuthorization();
+            builder.Services.AddHttpClient<CustomAuthenticationStateProvider>(client => { client.BaseAddress = new Uri(apiBaseAddress); }); // Your API base address
+            builder.Services.AddHttpClient<AuthService>(client => { client.BaseAddress = new Uri(apiBaseAddress); }); // Your API base address
+     
 
 
             var app = builder.Build();

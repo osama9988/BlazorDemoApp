@@ -3,7 +3,6 @@
 <PageTitle>BlazorDemoApp.BlazorServer2</PageTitle>
 
 <CascadingAuthenticationState>
-
     <AuthorizeView>
         <Authorized>
             <div class="page">
@@ -24,8 +23,13 @@
         </Authorized>
         <NotAuthorized>
             <!-- Content for unauthorized users -->
-            <p>Access denied.</p>
+            <div class="page">
+                <main>
+                    <article class="content px-4">
+                        <p>Access denied. Please log in to access this content.</p>
+                    </article>
+                </main>
+            </div>
         </NotAuthorized>
     </AuthorizeView>
 </CascadingAuthenticationState>
-

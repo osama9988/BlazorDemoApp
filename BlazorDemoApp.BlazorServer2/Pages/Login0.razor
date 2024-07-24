@@ -2,6 +2,7 @@
 @using BlazorDemoApp.Shared.Classes.BaseClass;
 @inject BlazorDemoApp.BlazorServer2.Services.AuthService  AuthService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime js
 
 <h3>Login</h3>
 
@@ -28,10 +29,11 @@
     {
         if (await AuthService.LoginAsync(loginRequest))
         {
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/admin");
         }
         else
         {
+            await js.InvokeVoidAsync("alert", "Invalid User Name or Password");
             // Handle login failure
             Console.Error.WriteLine("Login failed");
         }

@@ -1,4 +1,5 @@
 ﻿
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,26 +15,33 @@ namespace BlazorDemoApp.BlazorServer2.Services
     {
         private readonly IJSRuntime _jsRuntime;
         private readonly HttpClient _httpClient;
+        private readonly ISessionStorageService _sessionStorageService;
+
         private const string TokenKey = "authToken";
         private string _username;
         private string _userId;
 
-        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, HttpClient httpClient)
+        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, HttpClient httpClient, ISessionStorageService sessionStorageService)
         {
             _jsRuntime = jsRuntime;
             _httpClient = httpClient;
+            _sessionStorageService = sessionStorageService;
         }
 
-        public async Task MarkUserAsAuthenticated(string token)
+        private ClaimsPrincipal ParseToken(string token)
         {
-            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", TokenKey, token);
             var claims = JwtParser.ParseClaimsFromJwt(token);
             var identity = new ClaimsIdentity(claims, "jwt");
 
-            _username = JwtParser.GetClaimValue(claims, "unique_name");
-            _userId = JwtParser.GetClaimValue(claims, "nameid");
+            _username = JwtParser.GetClaimValue(claims, ClaimTypes.Name.ToString());
+            _userId = JwtParser.GetClaimValue(claims, ClaimTypes.NameIdentifier.ToString());
+            return new ClaimsPrincipal(identity);
+        }
+        public async Task MarkUserAsAuthenticated(string token)
+        {
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", TokenKey, token);
 
-            var user = new ClaimsPrincipal(identity);
+            var user = ParseToken(token);
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
         }
 
@@ -50,21 +58,35 @@ namespace BlazorDemoApp.BlazorServer2.Services
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", TokenKey);
-            if (string.IsNullOrEmpty(token))
+            try
             {
+
+                var token = await _sessionStorageService.GetItemAsync<string>("token");
+                if (string.IsNullOrEmpty(token))
+                {
+                    return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                }
+                var identity = new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwt");
+                var user = new ClaimsPrincipal(identity);
+                return await Task.FromResult(new AuthenticationState(user));
+
+                //// Use asynchronous interop call
+                //var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+
+                //if (string.IsNullOrEmpty(token))
+                //{
+                //    // No token found
+                //    return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                //}
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions
+                Console.WriteLine($"Error in GetAuthenticationStateAsync: {ex.Message}");
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var claims = JwtParser.ParseClaimsFromJwt(token);
-            var identity = new ClaimsIdentity(claims, "jwt");
 
-            _username = JwtParser.GetClaimValue(claims, "unique_name");
-            _userId = JwtParser.GetClaimValue(claims, "nameid");
-
-            var user = new ClaimsPrincipal(identity);
-            return new AuthenticationState(user);
         }
 
         public string GetUsername() => _username;

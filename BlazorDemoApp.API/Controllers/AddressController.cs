@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace BlazorDemoApp.API.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AddressController : MyAppServicesController3

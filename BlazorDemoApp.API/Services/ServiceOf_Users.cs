@@ -56,6 +56,8 @@ namespace BlazorDemoApp.API.Services
 
             var claims = new[]
             {
+                 new Claim( ClaimTypes.NameIdentifier.ToString(), user.Id.ToString()),
+                  new Claim( ClaimTypes.Name.ToString(), user.UserName.ToString()),
                 new Claim("permissions",str_roleClaims)
             };
 
@@ -63,12 +65,13 @@ namespace BlazorDemoApp.API.Services
 
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Key));
             var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+            var expire = (DateTime.Now).AddHours(4);
 
             var jwtSecurityToken = new JwtSecurityToken(
                 issuer: _jwt.Issuer,
                 audience: _jwt.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(20),
+                expires:expire,
                 //expires: DateTime.Now.AddDays(_jwt.DurationInDays),
                 signingCredentials: signingCredentials);
 
@@ -131,7 +134,7 @@ namespace BlazorDemoApp.API.Services
                 
             };
 
-            return new ApiResponse<object> { Success = true, Message = user_MustChangePass, Data= model };
+            return new ApiResponse<object> { Success = true, Message = "", Data= model };
         }
     }
 
