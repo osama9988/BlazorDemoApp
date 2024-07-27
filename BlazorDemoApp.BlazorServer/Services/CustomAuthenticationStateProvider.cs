@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.JSInterop;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
@@ -17,15 +18,18 @@ namespace BlazorDemoApp.BlazorServer.Services
         private const string TokenKey = "authToken";
         private string _username;
         private string _userId;
+        private readonly ProtectedLocalStorage _localStorage;
 
-        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, HttpClient httpClient)
+        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, HttpClient httpClient, ProtectedLocalStorage localStorage)
         {
             _jsRuntime = jsRuntime;
             _httpClient = httpClient;
+            _localStorage = localStorage;
         }
 
         public async Task MarkUserAsAuthenticated(string token)
         {
+            await _localStorage.SetAsync(TokenKey, token);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", TokenKey, token);
             var claims = JwtParser.ParseClaimsFromJwt(token);
             var identity = new ClaimsIdentity(claims, "jwt");
@@ -50,6 +54,7 @@ namespace BlazorDemoApp.BlazorServer.Services
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
+           var t= await _localStorage.GetAsync<string>(TokenKey);
             var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", TokenKey);
             if (string.IsNullOrEmpty(token))
             {

@@ -22,6 +22,7 @@ namespace BlazorDemoApp.BlazorServer2
 
             builder.Services.AddAuthenticationCore();
             builder.Services.AddAuthorization();
+            builder.Services.AddCascadingAuthenticationState();
 
             builder.Services.AddLogging();
             builder.Services.AddRazorPages();
