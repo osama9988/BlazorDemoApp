@@ -1,0 +1,103 @@
+﻿@page "/admin/allgov"
+@layout BlazorApp2.Shared.AdminLayout.AdminLayout
+[authorize]
+
+@using BlazorDemoApp.Shared.Classes.DTO
+@using  BlazorDemoApp.Shared
+@using System.Text.Json
+
+@inject IHttpClientFactory HttpClientFactory
+
+@inject ApiService ApiService 
+
+
+<PageTitle>List_Gov</PageTitle>
+
+<h3>List_Gov  33 </h3>
+
+<p>allgov ggggggggggggggggggggggg</p>
+
+
+@if (l != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in l)
+            {
+                <tr>
+                    <td>@item.NameAr</td>
+                    <td>@item.NameEn</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (errorMessage != null)
+{
+    <p class="text-danger">@errorMessage</p>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+
+
+
+
+@code {
+
+    private IEnumerable<DTO_Add.DTO_Gov>? l;
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var requestUri = "api/Address/GovGetAll";
+
+            var response = await ApiService.GetDataAsync<IEnumerable<DTO_Add.DTO_Gov>>(requestUri);
+
+            if (response.Success)
+            {
+                l = response.Data;
+            }
+            else
+            {
+                errorMessage = response.Message;
+            }
+
+            // var httpClient = HttpClientFactory.CreateClient("YourApi");
+            // var requestUri = "api/Address/GovGetAll";
+            // Console.WriteLine($"Full HTTP address: {requestUri}");
+
+            // var response = await httpClient.GetFromJsonAsync<ApiResponse<IEnumerable<DTO_Add.DTO_Gov>>>(requestUri);
+            // var response0 = await httpClient.GetFromJsonAsync<ApiResponse<object>>(requestUri);
+            // var data = await httpClient.GetAsync(requestUri);
+
+            // if (response0.Success)
+            // {
+            //     // Parse the object to IEnumerable<DTO_Gov>
+            //     var json = JsonSerializer.Serialize(response.Data);
+            //     var data1 = JsonSerializer.Deserialize<IEnumerable<DTO_Add.DTO_Gov>>(json);
+            // }
+            // else
+            // {
+            //     errorMessage = response.Message;
+            // }
+            // l = response.Data;
+        }
+        catch (Exception ex)
+        {
+            // Handle the exception
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+
+}

@@ -1,24 +1,35 @@
 ﻿using BlazorDemoApp.Shared;
 using BlazorDemoApp.Shared.Classes.DTO;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Identity.Data;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using System.Text.Json;
 
-namespace BlazorDemoApp.BlazorServer2.Services
+namespace BlazorApp2
 {
     public class ApiService
     {
         private readonly HttpClient _httpClient;
+        private readonly ProtectedLocalStorage _localStorage;
 
-        public ApiService(HttpClient httpClient)
+        public ApiService(HttpClient httpClient,  ProtectedLocalStorage localStorage)
         {
             _httpClient = httpClient;
+            _localStorage = localStorage;
         }
 
         public async Task<ApiResponse<T>> GetDataAsync<T>(string url)
         {
             try
             {
+                var tokenResult = await _localStorage.GetAsync<string>("AccessToken");
+               
+                if (!string.IsNullOrEmpty(tokenResult.Value))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResult.Value);
+                }
+
                 var response = await _httpClient.GetFromJsonAsync<ApiResponse<T>>(url);
                 if (response == null)
                 {
@@ -53,6 +64,13 @@ namespace BlazorDemoApp.BlazorServer2.Services
         {
             try
             {
+                var tokenResult = await _localStorage.GetAsync<string>("AccessToken");
+
+                if (!string.IsNullOrEmpty(tokenResult.Value))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResult.Value);
+                }
+
                 var response = await _httpClient.PostAsJsonAsync(url, model);
                 if (response == null)
                 {

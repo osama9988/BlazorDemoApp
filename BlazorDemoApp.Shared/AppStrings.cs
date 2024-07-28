@@ -25,6 +25,24 @@ namespace BlazorDemoApp.Shared
 
         public string DataType { get; set; }    
         public List<ApiError> Errors { get; set; }
+
+        public static async Task<ApiResponse<T>> HandleExceptionAsync(Func<Task<ApiResponse<T>>> action)
+        {
+            try
+            {
+                var result = await action();
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return new ApiResponse<T>
+                {
+                    Success = false,
+                    Message = e.Message 
+                };
+            }
+        }
     }
 
     public class ApiError

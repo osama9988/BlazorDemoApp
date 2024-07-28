@@ -58,7 +58,25 @@ namespace BlazorDemoApp.API
             //builder.Services.AddSwaggerGen();
             builder.Services.AddSwaggerGen(c =>
             {
-                 c.OperationFilter<AddAcceptLanguageHeaderParameter>();
+                c.OperationFilter<AddAcceptLanguageHeaderParameter>();
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description =
+                    "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                    },
+                    new[] { "api1", "openid" }
+                }
+            });
             });
 
             //
@@ -83,7 +101,7 @@ namespace BlazorDemoApp.API
 
             const string defaultCulture = "ar";
 
-            var supportedCultures = new[] {new CultureInfo(defaultCulture), new CultureInfo("en")};
+            var supportedCultures = new[] { new CultureInfo(defaultCulture), new CultureInfo("en") };
 
             builder.Services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -110,10 +128,10 @@ namespace BlazorDemoApp.API
 
             app.UseAuthorization();
 
-            
+
             //app.UseRequestLocalization(options => options.AddSupportedCultures("en", "ar").AddSupportedUICultures("en", "ar").SetDefaultCulture("ar"));
             app.UseRequestLocalization();
-            
+
 
             app.MapControllers();
 

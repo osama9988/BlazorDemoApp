@@ -1,0 +1,45 @@
+﻿@page "/login"
+@using BlazorDemoApp.Shared.Classes.BaseClass;
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime js
+@inject LoginService LoginService
+
+<h3>Login</h3>
+
+<EditForm Model="loginRequest" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Username: </label>
+        <InputText @bind-Value="loginRequest.UserName" />
+    </div>
+    <div>
+        <label>Password: </label>
+        <InputText @bind-Value="loginRequest.UserPass" type="password" />
+    </div>
+    <button type="submit">Login</button>
+</EditForm>
+
+@code {
+    private Base0_MyAppUser_Login loginRequest = new ();
+    //[Parameter] public string ReturnUrl { get; set; } = "/";
+
+    private async Task HandleLogin()
+    {
+        var loginResult = await LoginService.LoginAsync(loginRequest);
+        if (loginResult)
+        {
+            NavigationManager.NavigateTo("/admin");
+        }
+        else
+        {
+            await js.InvokeVoidAsync("alert", "Invalid User Name or Password");
+            // Handle login failure
+            Console.Error.WriteLine("Login failed");
+        }
+
+        
+    }
+}
