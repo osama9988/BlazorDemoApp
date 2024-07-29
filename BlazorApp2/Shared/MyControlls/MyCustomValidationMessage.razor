@@ -1,0 +1,18 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Linq.Expressions
+
+
+@typeparam TValue
+<div class="@CssClasses">
+    <ValidationMessage For="For" />
+</div>
+
+@code {
+    [Parameter] public Expression<Func<TValue>> For { get; set; }
+    [Parameter] public string AdditionalCssClass { get; set; }
+
+    private string CssClasses => $"my-custom-validation {AdditionalCssClass}";
+}
+
+

@@ -1,0 +1,92 @@
+﻿@using System.Reflection
+@using System.ComponentModel.DataAnnotations
+@using System.Linq.Expressions
+
+<label @attributes="CombinedAttributes">@label</label>
+
+@code {
+    [Parameter] public Expression<Func<object>> For { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object> AdditionalAttributes { get; set; } = new Dictionary<string, object>();
+
+    private IDictionary<string, object> CombinedAttributes => MergeAttributes();
+
+    private string label => GetDisplayName(GetPropertyName(For));
+
+    private string GetPropertyName(Expression<Func<object>> expression)
+    {
+        if (expression.Body is MemberExpression memberExpression)
+        {
+            return memberExpression.Member.Name;
+        }
+
+        if (expression.Body is UnaryExpression unaryExpression && unaryExpression.Operand is MemberExpression operandExpression)
+        {
+            return operandExpression.Member.Name;
+        }
+
+        throw new ArgumentException("Expression is not a member expression");
+    }
+
+    private string GetDisplayName(string propertyName)
+    {
+        var myprop = GetModelType().GetProperty(propertyName);
+        if (myprop == null)
+        {
+            return propertyName;
+        }
+
+        var displayAttribute = myprop.GetCustomAttribute<DisplayAttribute>();
+        return displayAttribute?.Name ?? propertyName;
+    }
+
+    private Type GetModelType()
+    {
+        if (For.Body is MemberExpression memberExpression)
+        {
+            return memberExpression.Expression.Type;
+        }
+
+        if (For.Body is UnaryExpression unaryExpression && unaryExpression.Operand is MemberExpression operandExpression)
+        {
+            return operandExpression.Expression.Type;
+        }
+
+        throw new ArgumentException("Expression is not a member expression");
+    }
+
+    private IDictionary<string, object> MergeAttributes()
+    {
+        var combinedAttributes = new Dictionary<string, object>(AdditionalAttributes)
+            {
+                ["for"] = GetPropertyName(For)
+            };
+        return combinedAttributes;
+    }
+}
+
+
+
+
+@* @using System.Reflection
+@using System.ComponentModel
+@using System.Linq.Expressions;
+
+<label @attributes="AdditionalAttributes">@label</label>
+
+@code {
+    [Parameter] public Expression<Func<string>> For { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object> AdditionalAttributes { get; set; }
+
+    private string label => GetDisplayName();
+
+    private string GetDisplayName()
+    {
+        var expression = (MemberExpression)For.Body;
+        var value = expression.Member.GetCustomAttribute(typeof(DisplayNameAttribute)) as DisplayNameAttribute;
+        return value?.DisplayName ?? expression.Member.Name ?? "";
+    }
+} *@
