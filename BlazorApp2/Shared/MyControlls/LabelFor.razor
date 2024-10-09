@@ -1,6 +1,10 @@
 ﻿@using System.Reflection
 @using System.ComponentModel.DataAnnotations
 @using System.Linq.Expressions
+@using System;
+@using System.Resources;
+
+
 
 <label @attributes="CombinedAttributes">@label</label>
 
@@ -29,17 +33,49 @@
         throw new ArgumentException("Expression is not a member expression");
     }
 
+    // Method to get the display name of a property from its Display attribute
     private string GetDisplayName(string propertyName)
     {
-        var myprop = GetModelType().GetProperty(propertyName);
-        if (myprop == null)
+        // Get the property info from the model type using reflection
+        var propertyInfo = GetModelType().GetProperty(propertyName);
+
+        // If the property is not found, return the property name as is
+        if (propertyInfo == null)
         {
             return propertyName;
         }
 
-        var displayAttribute = myprop.GetCustomAttribute<DisplayAttribute>();
-        return displayAttribute?.Name ?? propertyName;
+        // Get the Display attribute of the property, if any
+        var displayAttribute = propertyInfo.GetCustomAttribute<DisplayAttribute>();
+
+        // If Display attribute is not present, return the property name
+        if (displayAttribute == null)
+        {
+            return propertyName;
+        }
+
+        // If ResourceType is specified, use it to get the localized string
+        if (displayAttribute.ResourceType != null && !string.IsNullOrEmpty(displayAttribute.Name))
+        {
+            var resourceManager = new ResourceManager(displayAttribute.ResourceType);
+            var localizedString = resourceManager.GetString(displayAttribute.Name);
+            return localizedString ?? propertyName;
+        }
+
+        // Return the display name from the attribute if it exists, otherwise return the property name
+        return displayAttribute.Name ?? propertyName;
     }
+    // private string GetDisplayName(string propertyName)
+    // {
+    //     var myprop = GetModelType().GetProperty(propertyName);
+    //     if (myprop == null)
+    //     {
+    //         return propertyName;
+    //     }
+
+    //     var displayAttribute = myprop.GetCustomAttribute<DisplayAttribute>();
+    //     return displayAttribute?.Name ?? propertyName;
+    // }
 
     private Type GetModelType()
     {
